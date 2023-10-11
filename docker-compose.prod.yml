@@ -1,0 +1,8 @@
+version: "3.7"
+
+services:
+  bot-pozo:
+    container_name: bot-pozo
+    image: tincho70/bot-pozo:${TAG}
+    restart: always
+    build: .
