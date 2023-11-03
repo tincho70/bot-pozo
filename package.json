@@ -1,10 +1,10 @@
 {
   "name": "bot-pozo",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Un simple bot de Discord para mostrar en forma de ticker el saldo de una wallet LNBits",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf dist && swc ./src -d dist",
+    "build": "rm -rf dist && swc ./src -d dist && mkdir -p dist/slashCommands",
     "start": "node dist/index.js",
     "start:docker": "pnpm build && node --inspect=0.0.0.0 dist/index.js"
   },
@@ -18,7 +18,8 @@
   "dependencies": {
     "axios": "^1.5.0",
     "discord.js": "^14.13.0",
-    "node-cron": "^3.0.2"
+    "node-cron": "^3.0.2",
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "@swc/cli": "^0.1.62",
@@ -26,10 +27,16 @@
     "@tsconfig/node18": "^18.2.2",
     "@types/node": "^20.6.3",
     "@types/node-cron": "^3.0.8",
+    "@types/pg": "^8.10.7",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "@typescript-eslint/parser": "^6.7.2",
     "eslint": "^8.49.0",
     "tswc": "^1.2.0",
     "typescript": "^5.2.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "undici@<5.26.2": ">=5.26.2"
+    }
   }
 }
