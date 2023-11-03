@@ -15,4 +15,4 @@ Un simple bot de Discord para mostrar en forma de ticker el saldo de una wallet 
 'SendVoiceMessages'
 ]
 
-https://discord.com/api/oauth2/authorize?client_id=1151527349242822738&permissions=67456016&scope=bot
+https://discord.com/api/oauth2/authorize?client_id=xxxxxx&permissions=67456016&scope=bot
