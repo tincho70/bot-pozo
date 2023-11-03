@@ -1,16 +1,14 @@
 import axios from 'axios'
 import { ApiWallet } from '../types'
 
-const getWalletInfo = async (
-  apiKey: string
-): Promise<ApiWallet | undefined> => {
+const getWalletInfo = async (): Promise<ApiWallet | undefined> => {
   try {
     const { data } = await axios.get(
       'https://wallet.lacrypta.ar/api/v1/wallet',
       {
         headers: {
           Accept: 'application/json',
-          'X-Api-Key': apiKey,
+          'X-Api-Key': process.env.INVOICE_READ_KEY,
         },
       }
     )
