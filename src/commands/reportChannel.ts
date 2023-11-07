@@ -18,7 +18,7 @@ const command: Command = {
       const channel = await message.guild.channels
         .fetch(name.slice(2, -1)) // Remove "<#" and ">"
         .catch((error) => {
-          console.error('ERROR in reportChannel command:', error)
+          console.error(`ERROR getting channel ${name}:`, error)
         })
 
       if (!channel)

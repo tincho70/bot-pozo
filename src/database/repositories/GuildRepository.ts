@@ -99,7 +99,7 @@ class GuildRepository implements IRepository<Guild> {
    */
   async updatePrefix(id: string, prefix: string): Promise<Guild | null> {
     try {
-      const updated = this.update(id, { prefix: prefix })
+      const updated = await this.update(id, { prefix: prefix })
       if (!updated) {
         const guild = this.create({
           id,
@@ -121,7 +121,7 @@ class GuildRepository implements IRepository<Guild> {
     channel_id: string
   ): Promise<Guild | null> {
     try {
-      const updated = this.update(id, { channel_id: channel_id })
+      const updated = await this.update(id, { channel_id: channel_id })
       if (!updated) {
         const guild = this.create({
           id,
