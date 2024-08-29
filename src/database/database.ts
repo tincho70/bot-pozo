@@ -1,12 +1,12 @@
-import { Pool } from 'pg'
-import { Debugger } from 'debug'
-import { logger } from '../helpers'
+import { Pool } from "pg";
+import { Debugger } from "debug";
+import { logger } from "../helpers";
 
-const log: Debugger = logger.extend('database')
-const error: Debugger = log.extend('error')
+const log: Debugger = logger.extend("database");
+const error: Debugger = log.extend("error");
 
 class Database {
-  private pool!: Pool
+  private pool!: Pool;
 
   constructor() {
     try {
@@ -16,30 +16,30 @@ class Database {
         database: process.env.POSTGRES_DB,
         password: process.env.POSTGRES_PASSWORD,
         port: process.env.POSTGRES_PORT ? process.env.POSTGRES_PORT : 5432, // Default
-      })
-      log(`💾 Database ${process.env.POSTGRES_DB}`)
+      });
+      log(`💾 Database ${process.env.POSTGRES_DB}`);
     } catch (err) {
       error(
         `💾 Connection to database ${process.env.POSTGRES_DB} failed, skipping...`
-      )
+      );
     }
   }
 
   async query(text: string, params?: unknown[]) {
-    const start = Date.now()
-    const res = await this.pool.query(text, params)
-    const duration = Date.now() - start
-    log('executed query', {
+    const start = Date.now();
+    const res = await this.pool.query(text, params);
+    const duration = Date.now() - start;
+    log("executed query", {
       text: text,
       duration: duration,
       count: res.rowCount,
-    })
-    return res
+    });
+    return res;
   }
 
   async end() {
-    await this.pool.end()
+    await this.pool.end();
   }
 }
 
-export const db = new Database()
+export const db = new Database();
