@@ -1,8 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pool } from 'pg'
+import { Debugger } from 'debug'
+import { logger } from '../helpers'
+
+const log: Debugger = logger.extend('database')
+const error: Debugger = log.extend('error')
 
 class Database {
-  private pool: Pool
+  private pool!: Pool
 
   constructor() {
     try {
@@ -11,21 +15,25 @@ class Database {
         host: process.env.POSTGRES_HOST,
         database: process.env.POSTGRES_DB,
         password: process.env.POSTGRES_PASSWORD,
-        port: process.env.POSTGRES_PORT || 5432, // Puerto predeterminado de PostgreSQL
+        port: process.env.POSTGRES_PORT ? process.env.POSTGRES_PORT : 5432, // Default
       })
-      console.log(`💾 Connected to database ${process.env.POSTGRES_DB}`)
-    } catch (error) {
-      console.error(
+      log(`💾 Database ${process.env.POSTGRES_DB}`)
+    } catch (err) {
+      error(
         `💾 Connection to database ${process.env.POSTGRES_DB} failed, skipping...`
       )
     }
   }
 
-  async query(text: string, params?: any[]) {
+  async query(text: string, params?: unknown[]) {
     const start = Date.now()
     const res = await this.pool.query(text, params)
     const duration = Date.now() - start
-    console.debug('executed query', { text, duration, rows: res.rowCount })
+    log('executed query', {
+      text: text,
+      duration: duration,
+      count: res.rowCount,
+    })
     return res
   }
 

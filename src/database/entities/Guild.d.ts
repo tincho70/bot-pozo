@@ -3,8 +3,6 @@
 export interface Guild {
   id: string
   joined_at: Date
-  prefix: string
-  channel_id?: string
 }
 
 export interface Partial<Guild> {

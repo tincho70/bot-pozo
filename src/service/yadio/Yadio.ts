@@ -1,5 +1,9 @@
 import axios from 'axios'
 import { ApiYadio } from './Yadio.d'
+import { logger } from '../../helpers'
+import { Debugger } from 'debug'
+
+const error: Debugger = logger.extend('error')
 
 const convert = async (
   amount: number,
@@ -28,11 +32,11 @@ const convert = async (
     // Se convierten los BTC a SAT en caso que sea necesario
     data.result *= factor
     return data as ApiYadio
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('AXIOS ERROR', error.cause)
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      error.extend('AXIOS ERROR').log(err)
     } else {
-      console.error('UNEXPECTED ERROR', error)
+      error.extend('UNEXPECTED ERROR').log(err)
     }
     return undefined
   }

@@ -1,71 +1,38 @@
-import { Interaction } from 'discord.js'
-import { BotEvent } from '../types'
+import { Interaction } from "discord.js";
+import { BotEvent } from "../types";
+
+import { Debugger } from "debug";
+import { logger } from "../helpers";
+
+const error: Debugger = logger
+  .extend("Event:InteractionCreate")
+  .extend("error");
 
 const event: BotEvent = {
-  name: 'interactionCreate',
+  name: "interactionCreate",
   execute: (interaction: Interaction) => {
     if (interaction.isChatInputCommand()) {
       const command = interaction.client.slashCommands.get(
         interaction.commandName
-      )
-      const cooldown = interaction.client.cooldowns.get(
-        `${interaction.commandName}-${interaction.user.username}`
-      )
-      if (!command) return
-      if (command.cooldown && cooldown) {
-        if (Date.now() < cooldown) {
-          interaction.reply(
-            `Tienes que esperar ${Math.floor(
-              Math.abs(Date.now() - cooldown) / 1000
-            )} segundo(s) para utilizar este comando nuevamente.`
-          )
-          setTimeout(() => interaction.deleteReply(), 5000)
-          return
-        }
-        interaction.client.cooldowns.set(
-          `${interaction.commandName}-${interaction.user.username}`,
-          Date.now() + command.cooldown * 1000
-        )
-        setTimeout(() => {
-          interaction.client.cooldowns.delete(
-            `${interaction.commandName}-${interaction.user.username}`
-          )
-        }, command.cooldown * 1000)
-      } else if (command.cooldown && !cooldown) {
-        interaction.client.cooldowns.set(
-          `${interaction.commandName}-${interaction.user.username}`,
-          Date.now() + command.cooldown * 1000
-        )
-      }
-      command.execute(interaction)
+      );
+      if (!command) return;
+      command.execute(interaction);
     } else if (interaction.isAutocomplete()) {
       const command = interaction.client.slashCommands.get(
         interaction.commandName
-      )
+      );
       if (!command) {
-        console.error(`Command ${interaction.commandName} not found.`)
-        return
+        error(`No command matching ${interaction.commandName} was found.`);
+        return;
       }
       try {
-        if (!command.autocomplete) return
-        command.autocomplete(interaction)
-      } catch (error) {
-        console.error(error)
-      }
-    } else if (interaction.isModalSubmit()) {
-      const command = interaction.client.slashCommands.get(interaction.customId)
-      if (!command) {
-        console.error(`Command ${interaction.customId} not found.`)
-        return
-      }
-      try {
-        if (!command.modal) return
-        command.modal(interaction)
-      } catch (error) {
-        console.error(error)
+        if (!command.autocomplete) return;
+        command.autocomplete(interaction);
+      } catch (err) {
+        error(err);
       }
     }
   },
-}
+};
 
-export default event
+export default event;

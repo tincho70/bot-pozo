@@ -1,6 +1,11 @@
 import { ActivityType, Client } from 'discord.js'
-import getWalletInfo from './walletInfo'
-import convert from './Yadio'
+import getWalletInfo from '../lnbits/walletInfo'
+import convert from '../yadio/Yadio'
+import { Debugger } from 'debug'
+import { logger } from '../../helpers'
+
+const log: Debugger = logger
+const error: Debugger = log.extend('error')
 
 const updateTicker = async (client: Client) => {
   try {
@@ -25,13 +30,13 @@ const updateTicker = async (client: Client) => {
       const nickname = `${balance.toLocaleString('es-AR')} sats`
       client.guilds.cache.forEach((guild) => {
         if (nickname != guild.members.me?.nickname) {
-          console.log(`[${guild.name}] New balance: ${nickname}`)
-          guild.members.me?.setNickname(nickname).catch(console.error)
+          log(`[${guild.name}] New balance: ${nickname}`)
+          guild.members.me?.setNickname(nickname).catch(error)
         }
       })
     }
-  } catch (error) {
-    console.error(error)
+  } catch (err) {
+    error(err)
   }
 }
 

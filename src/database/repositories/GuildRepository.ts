@@ -3,6 +3,11 @@ import { Collection } from 'discord.js'
 import { db } from '../database'
 import { Guild, Partial } from '../entities/Guild'
 import { IRepository } from './IRepository'
+import { Debugger } from 'debug'
+import { logger } from '../../helpers'
+
+const log: Debugger = logger.extend('GuildRepository')
+const error: Debugger = log.extend('error')
 
 class GuildRepository implements IRepository<Guild> {
   private guilds: Collection<string, Guild> = new Collection()
@@ -18,8 +23,8 @@ class GuildRepository implements IRepository<Guild> {
       if (rows.length === 0) return null
       this.guilds.set(id, rows[0])
       return rows[0]
-    } catch (error) {
-      console.error('ERROR in Guild.getById:', error)
+    } catch (err) {
+      error('ERROR in Guild.getById:', err)
       return null
     }
   }
@@ -27,16 +32,16 @@ class GuildRepository implements IRepository<Guild> {
   async create(guild: Guild): Promise<Guild | null> {
     try {
       const query =
-        'INSERT INTO guild (id, joined_at, prefix, channel_id) VALUES ($1, $2, $3, $4) RETURNING *'
-      const values = [guild.id, guild.joined_at, guild.prefix, guild.channel_id]
+        'INSERT INTO guild (id, joined_at, prefix, channel_id) VALUES ($1, $2) RETURNING *'
+      const values = [guild.id, guild.joined_at]
       const { rows } = await db.query(query, values)
       if (rows.length === 0) return null
 
       // Cache guild
       this.guilds.set(guild.id, rows[0])
       return rows[0]
-    } catch (error) {
-      console.error('ERROR in Guild.create:', error)
+    } catch (err) {
+      error('ERROR in Guild.create:', err)
       return null
     }
   }
@@ -56,7 +61,7 @@ class GuildRepository implements IRepository<Guild> {
       }
 
       if (updateFields.length === 0) {
-        console.warn('No se especificaron campos para actualizar.')
+        log('No fields specified to update.')
         return null
       }
 
@@ -70,8 +75,8 @@ class GuildRepository implements IRepository<Guild> {
       // Update cache
       this.guilds.set(id, rows[0])
       return rows[0]
-    } catch (error) {
-      console.error('ERROR in Guild.update:', error)
+    } catch (err) {
+      error('ERROR in Guild.update:', err)
       return null
     }
   }
@@ -83,58 +88,9 @@ class GuildRepository implements IRepository<Guild> {
       const values = [id]
       await db.query(query, values)
       return true
-    } catch (error) {
-      console.error('ERROR in Guild.delete:', error)
+    } catch (err) {
+      error('ERROR in Guild.delete:', err)
       return false
-    }
-  }
-
-  /**
-   * Updates the prefix of a guild in the database.
-   * If the guild doesn't exists, then insert in the database.
-   *
-   * @param {string} id - The ID of the guild.
-   * @param {string} prefix - The new prefix to be set.
-   * @return {Promise<Guild | null>} - A Promise that resolves to the updated guild object or null if the guild does not exist.
-   */
-  async updatePrefix(id: string, prefix: string): Promise<Guild | null> {
-    try {
-      const updated = await this.update(id, { prefix: prefix })
-      if (!updated) {
-        const guild = this.create({
-          id,
-          joined_at: new Date(),
-          prefix,
-          channel_id: undefined, // Default value
-        })
-        return guild || null
-      }
-      return updated || null
-    } catch (error) {
-      console.error('ERROR in Guild.update:', error)
-      return null
-    }
-  }
-
-  async updateReportChannel(
-    id: string,
-    channel_id: string
-  ): Promise<Guild | null> {
-    try {
-      const updated = await this.update(id, { channel_id: channel_id })
-      if (!updated) {
-        const guild = this.create({
-          id,
-          joined_at: new Date(),
-          prefix: process.env.DISCORD_COMMAND_PREFIX, // Default value
-          channel_id: channel_id,
-        })
-        return guild || null
-      }
-      return updated || null
-    } catch (error) {
-      console.error('ERROR in Guild.update:', error)
-      return null
     }
   }
 }
