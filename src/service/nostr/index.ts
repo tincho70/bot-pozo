@@ -27,7 +27,6 @@ const subscribe = async (client: Client) => {
 
     if (event) {
       const amount = event.tags.find((tag) => tag[0] === "amount");
-      log(amount);
       client.laWallet = amount
         ? { balance: parseInt(amount[1]), name: "pozo" }
         : undefined;
