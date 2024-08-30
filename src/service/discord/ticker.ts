@@ -1,15 +1,17 @@
 import { ActivityType, Client } from "discord.js";
-import getWalletInfo from "../lnbits/walletInfo";
 import convert from "../yadio/Yadio";
 import { Debugger } from "debug";
 import { logger } from "../../helpers";
+import getLNbitsInfo from "../lnbits";
 
 const log: Debugger = logger;
 const error: Debugger = log.extend("error");
 
 const updateTicker = async (client: Client) => {
   try {
-    const walletInfo = await getWalletInfo();
+    const walletInfo = process.env.INVOICE_READ_KEY
+      ? await getLNbitsInfo()
+      : client.laWallet;
     if (walletInfo) {
       const balance = Math.ceil(walletInfo.balance / 1000);
       const yadio = await convert(balance, "sat", "ars");

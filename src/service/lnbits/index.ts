@@ -5,7 +5,7 @@ import { logger } from "../../helpers";
 
 const error: Debugger = logger.extend("error");
 
-const getWalletInfo = async (): Promise<ApiWallet | undefined> => {
+const getLNbitsInfo = async (): Promise<ApiWallet | undefined> => {
   try {
     const { data } = await axios.get("https://demo.lnbits.com/api/v1/wallet", {
       headers: {
@@ -24,4 +24,4 @@ const getWalletInfo = async (): Promise<ApiWallet | undefined> => {
   }
 };
 
-export default getWalletInfo;
+export default getLNbitsInfo;

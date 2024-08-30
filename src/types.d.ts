@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   AutocompleteInteraction,
   CacheType,
@@ -20,6 +21,7 @@ declare module "discord.js" {
     slashCommands: Collection<string, SlashCommand>;
     cooldowns: Collection<string, number>;
     updateTicker: (client: Client) => void;
+    laWallet: ApiWallet | undefined;
   }
 }
 
@@ -42,6 +44,7 @@ declare global {
       DISCORD_APP_ID: string;
       DISCORD_COMMAND_PREFIX: string;
       INVOICE_READ_KEY: string;
+      LEDGER_PUBKEY: string;
       LAWALLET_PUBKEY: string;
       RELAYS: string;
       POSTGRES_DB: string;
