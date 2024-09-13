@@ -34,9 +34,9 @@ const convert = async (
     return data as ApiYadio;
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      error.extend("AXIOS ERROR").log(err);
+      error.extend("AXIOS ERROR")(err);
     } else {
-      error.extend("UNEXPECTED ERROR").log(err);
+      error.extend("UNEXPECTED ERROR")(err);
     }
     return undefined;
   }
